@@ -24,7 +24,7 @@ jobs:
         yum -y install bash curl
     
     - name: Test Coverity Action
-      uses: sgallagher/coverity-action@v0
+      uses: sgallagher/coverity-action@main
       with:
         token: notreal
         email: sgallagh@redhat.com
