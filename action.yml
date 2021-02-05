@@ -1,0 +1,42 @@
+name: Coverity Scan
+
+description: >
+  Scan your project with the Coverity Static Analysis tool, provided by
+  https://scan.coverity.com.
+
+inputs:
+  project:
+    description: The name of the project on scan.coverity.com.
+    required: false
+    default: ${{ github.repository }}
+  
+  token:
+    description: >
+      A personal token to authenticate to scan.coverity.com.
+      See https://scan.coverity.com/projects/<yourproject>/builds/new to
+      locate your token.
+    required: true
+  
+  email:
+    description: Email address to receive scan results.
+    required: true
+
+  configure_command:
+    description: The command used to configure the code before building.
+    required: false
+    default: ./configure
+  
+  build_command:
+    description: The command used to build the code.
+    required: false
+    default: make
+  
+runs:
+  using: "composite"
+  steps:
+    
+    - name: Retrieve the md5 hash of the scanning tool
+      id: scanner_md5
+      shell: bash
+      run: |
+        echo "::set-output name=md5sum::$(curl https://scan.coverity.com/download/linux64 --form token="${{ inputs.token }}" --form project="${{ inputs.project }}" --form md5=1)"
