@@ -4,6 +4,10 @@ description: >
   Scan your project with the Coverity Static Analysis tool, provided by
   https://scan.coverity.com.
 
+branding:
+  icon: eye
+  color: yellow
+
 inputs:
   project:
     description: The name of the project on scan.coverity.com.
@@ -41,4 +45,19 @@ runs:
       run: |
         echo "::set-output name=md5sum::$(curl https://scan.coverity.com/download/linux64 --silent --form token="${{ inputs.token }}" --form project="${{ inputs.project }}" --form md5=1)"
 
-      
+    - name: Check scanner cache
+      id: cache_scanner
+      uses: actions/cache@v2
+        with:
+          path: cov-analysis-linux64
+          key: cov-analysis-linux64-${{ steps.scanner_md5.outputs.md5sum }}
+
+    - name: Download scanner
+      if: steps.cache_scanner.outputs.cache-hit != 'true'
+      run: |
+        curl https://scan.coverity.com/download/linux64 --silent --form token="${{ inputs.token }}" --form project="${{ inputs.project }}" -o cov-analysis-linux64.tgz
+
+    - name: Extract scanner
+      if: steps.cache_scanner.outputs.cache-hit != 'true'
+      run: |
+        tar xf cov-analysis-linux64.tgz --strip-components=1 -C cov-analysis-linux64
