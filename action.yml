@@ -39,4 +39,6 @@ runs:
       id: scanner_md5
       shell: bash
       run: |
-        echo "::set-output name=md5sum::$(curl https://scan.coverity.com/download/linux64 --form token="${{ inputs.token }}" --form project="${{ inputs.project }}" --form md5=1)"
+        echo "::set-output name=md5sum::$(curl https://scan.coverity.com/download/linux64 --no-progress-meter --form token="${{ inputs.token }}" --form project="${{ inputs.project }}" --form md5=1)"
+
+      
