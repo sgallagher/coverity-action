@@ -1,0 +1,42 @@
+name:
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    name: Self Test
+    runs-on: ubuntu-latest
+
+    container:
+      image: centos:8
+
+    steps:
+    - name: Install git
+      run: |
+        yum -y install git-core
+
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Enable EPEL
+      run: |
+        yum -y install epel-release
+
+    - name: Enable PowerTools
+      run: |
+        yum -y install dnf-plugins-core
+        yum config-manager --set-enabled powertools
+    
+    - name: Install dependencies
+      run: |
+        yum -y install bash curl
+    
+    - name: Test Coverity Action
+      uses: sgallagher/coverity-action
+      with:
+        token: notreal
+        email: sgallagh@redhat.com
+        configure_command: /bin/true
+        build_command: /bin/true
+        
